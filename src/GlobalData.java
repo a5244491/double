@@ -1,11 +1,13 @@
 import java.util.ArrayList;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 /**
  * Created by cq on 14-7-28.
  */
 public class GlobalData {
     private String id;
-    private ArrayList pool1 = new ArrayList();
-    private ArrayList pool2 = new ArrayList();
+    private ArrayList pool1 = new ArrayList(); // 红色球
+    private ArrayList pool2 = new ArrayList(); // 蓝色球
 
     public GlobalData(String id, String s) {
         this.id = id;
@@ -16,6 +18,29 @@ public class GlobalData {
             }
             pool2.add(temp[temp.length-1]);
         }
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public static GlobalData getGlobalData(String line) {
+        if (line == null) return null;
+        Pattern pattern = Pattern.compile("[0-9]{7}");
+        Matcher matcher = pattern.matcher(line);
+        String id = "";
+        if(matcher.find()) {
+            id = matcher.group();
+        }
+        Pattern pattern2 = Pattern.compile("([0-9][0-9] ){6}[0-9][0-9]");
+        Matcher matcher2 = pattern2.matcher(line);
+        String nums = "";
+        if(matcher2.find()) {
+            nums = matcher2.group();
+        }
+//        System.out.println(id);
+//        System.out.println(nums);
+        return new GlobalData(id, nums);
     }
 
     public ArrayList getPool1() {
@@ -32,5 +57,10 @@ public class GlobalData {
 
     public void print() {
         System.out.println("期号" + this.id + " 红色球号码: " + this.getPool1() + " 蓝色球号码:" + this.getPool2());
+    }
+
+    public static void main(String[] args) {
+        GlobalData gd = GlobalData.getGlobalData("2014-08-10 	2014091 	01 05 12 19 27 29 14 	395,683,536");
+        gd.print();
     }
 }
