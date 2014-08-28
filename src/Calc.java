@@ -37,6 +37,57 @@ public class Calc {
     }
 
 
+    /**
+     * 上期出现的号，本期再次出现的概率有多大
+     */
+    private void justed2(int numBegin, int numEnd) {
+        for(int i = numBegin; i < numEnd; i++) {
+            GlobalData first = getNumDate(i);
+            GlobalData second = getNumDate(i + 1);
+
+            ArrayList firstPool1 = first.getPool1();
+            ArrayList secondPool1 = second.getPool1();
+            ArrayList include= repeat(i, i + 1);
+//            ArrayList include = new ArrayList();
+//            ArrayList exclude = new ArrayList();
+//            for (int j = 0; j < firstPool1.size(); j++) {
+//                String temp = (String) firstPool1.get(j);
+//                if (secondPool1.contains(temp)) {
+//                    include.add(temp);
+//                } else {
+//                    exclude.add(temp);
+//                }
+//            }
+            System.out.printf("%8s: 本期重复的%20s 非重复的%20s%n",
+                    second.getId(), include.toString(), secondPool1.toString());
+        }
+    }
+
+
+    /**
+     * 计算指定期号号码在另一期中出现的重号。
+     * @param target
+     * @param old
+     */
+    private ArrayList repeat(int target, int old){
+        GlobalData first = getNumDate(target);
+        GlobalData second = getNumDate(old);
+
+        ArrayList firstPool1 = first.getPool1();
+        ArrayList secondPool1 = second.getPool1();
+        ArrayList include = new ArrayList();
+        ArrayList exclude = new ArrayList();
+        for (int j = 0; j < firstPool1.size(); j++) {
+            String temp = (String) firstPool1.get(j);
+            if (secondPool1.contains(temp)) {
+                include.add(temp);
+            } else {
+                exclude.add(temp);
+            }
+        }
+        return include;
+    }
+
     /*
      * 根据自己的算法 用历史数据进行判断，看看成功的概率有多大。
      */
@@ -63,7 +114,8 @@ public class Calc {
                 exclude.add(temp);
             }
         }
-        System.out.printf("%8s:预测%64s 预测到的%20s 未预测到的%20s%n", calced.getId(),listCalced.toString(), include.toString(), exclude.toString());
+        System.out.printf("%8s:预测%64s 预测到的%20s 未预测到的%20s 与上期重复的号%20s%n",
+                calced.getId(),listCalced.toString(), include.toString(), exclude.toString());
     }
 
     /*
@@ -138,6 +190,7 @@ public class Calc {
     public static void main(String[] arg) {
         Calc c = new Calc();
 //        c.removeOld("2014098");
-        c.justed();
+//       c.justed();
+        c.justed2(2014006, 2014097);
     }
 }
