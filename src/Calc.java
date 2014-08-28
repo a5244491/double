@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -36,6 +37,34 @@ public class Calc {
     }
 
 
+    /*
+     * 根据自己的算法 用历史数据进行判断，看看成功的概率有多大。
+     */
+    public void justed() {
+        int numbegin = 2014006;
+        int numend = 2014097;
+        for(int i = numbegin; i <= numend; i++) {
+            GlobalData calced = removeOld(i + "");
+            GlobalData truely = getNumDate(i);
+            anylisy(calced, truely);
+        }
+    }
+
+    private void anylisy(GlobalData calced, GlobalData truely) {
+        ArrayList listCalced = calced.getPool1();
+        ArrayList listTruely = truely.getPool1();
+        ArrayList include = new ArrayList();
+        ArrayList exclude = new ArrayList();
+        for(int i = 0; i < listTruely.size(); i++) {
+            String temp = (String) listTruely.get(i);
+            if(listCalced.contains(temp)) {
+                include.add(temp);
+            } else {
+                exclude.add(temp);
+            }
+        }
+        System.out.printf("%8s:预测%64s 预测到的%20s 未预测到的%20s%n", calced.getId(),listCalced.toString(), include.toString(), exclude.toString());
+    }
 
     /*
      * 获取前5期重号 这个思路最男。
@@ -63,18 +92,21 @@ public class Calc {
     /*
      * 粗略删除之前5期已经出现的号码
      */
-    private void removeOld(String number) {
+    private GlobalData removeOld(String number) {
         Integer target = Integer.parseInt(number);
         GlobalData next = new GlobalData(target.toString(), fullPool.toString());
         for (int i = 1; i <= 5; i++) {
             GlobalData temp = andes.get((target.intValue() - i) + "");
             next.remove(temp);
         }
-
-        next.print();
+//        next.print();
+        return next;
     }
 
 
+    /*
+     * 将所有的往期数据 全部打印出来
+     */
     public void printAll() {
         Iterator iter = andes.entrySet().iterator();
         while (iter.hasNext()) {
@@ -106,6 +138,6 @@ public class Calc {
     public static void main(String[] arg) {
         Calc c = new Calc();
 //        c.removeOld("2014098");
-        c.printAll();
+        c.justed();
     }
 }
