@@ -12,6 +12,7 @@ import java.util.Map;
  * 3 从待选区里面 生成号码组合。
  */
 public class Calc {
+    private AnyliseDataList anyliseDatalist;
     private HashMap<String, BallData> andes;
     private StringBuilder fullPool = new StringBuilder("01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33");
     private StringBuilder rest = new StringBuilder(fullPool);
@@ -82,11 +83,13 @@ public class Calc {
      * 根据自己的算法 用历史数据进行判断，看看成功的概率有多大。
      */
     public void justed(int numbegin, int numend) {
+        anyliseDatalist = new AnyliseDataList();
         for(int i = numbegin; i <= numend; i++) {
             BallData calced = removeOld(i + "");
             BallData truely = getNumDate(i);
             anylisy(calced, truely);
         }
+        anyliseDatalist.sortByRate();
     }
 
     /**
@@ -109,7 +112,8 @@ public class Calc {
         }
         int id = Integer.parseInt(calced.getId());
         AnyliseData ad = new AnyliseData(calced.getId(), calced, truely, include, exclude, repeat(id, id - 1));
-        ad.print();
+        //ad.print();
+        anyliseDatalist.addData(ad);
 //        System.out.printf("%8s:预%64s 预测命中率%5.2f%% 命中率%5.2f%%  命中%20s 未命中%20s 本期重号%20s %n",
 //                calced.getId(),listCalced.toString(), include.size()*100.0/listCalced.size(), include.size()*100.0/6, include.toString(), exclude.toString(), repeat(id, id - 1));
     }
@@ -163,7 +167,7 @@ public class Calc {
     public static void main(String[] arg) {
         Calc c = new Calc();
         int numbegin = 2014006;
-        int numend = 2014097;
+        int numend = 2014099;
 //        c.removeOld("2014098");
        c.justed(numbegin, numend);
 

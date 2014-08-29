@@ -4,12 +4,12 @@ import java.util.regex.Matcher;
 /**
  * Created by cq on 14-7-28.
  */
-public class GlobalData {
+public class BallData {
     private String id;
     private ArrayList pool1 = new ArrayList(); // 红色球
     private ArrayList pool2 = new ArrayList(); // 蓝色球
 
-    public GlobalData(String id, String s) {
+    public BallData(String id, String s) {
         this.id = id;
         if(s != null) {
             String[] temp = s.split(" ");
@@ -24,7 +24,7 @@ public class GlobalData {
         return id;
     }
 
-    public static GlobalData getGlobalData(String line) {
+    public static BallData getGlobalData(String line) {
         if (line == null) return null;
         Pattern pattern = Pattern.compile("[0-9]{7}");
         Matcher matcher = pattern.matcher(line);
@@ -40,7 +40,7 @@ public class GlobalData {
         }
 //        System.out.println(id);
 //        System.out.println(nums);
-        return new GlobalData(id, nums);
+        return new BallData(id, nums);
     }
 
     public ArrayList getPool1() {
@@ -51,7 +51,7 @@ public class GlobalData {
         return this.pool2;
     }
 
-    public void remove(GlobalData temp) {
+    public void remove(BallData temp) {
         this.pool1.removeAll(temp.getPool1());
     }
 
@@ -60,7 +60,7 @@ public class GlobalData {
     }
 
     public static void main(String[] args) {
-        GlobalData gd = GlobalData.getGlobalData("2014-08-10 	2014091 	01 05 12 19 27 29 14 	395,683,536");
+        BallData gd = BallData.getGlobalData("2014-08-10 	2014091 	01 05 12 19 27 29 14 	395,683,536");
         gd.print();
     }
 }
