@@ -1,8 +1,6 @@
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Properties;
 
 /**
  * Created by cq on 14-8-26.
@@ -34,14 +32,14 @@ public class FileUtil {
     }
 
 
-    public static HashMap<String, GlobalData> bulidFromTxt(String filePath) throws IOException{
-        HashMap<String, GlobalData> andes = new HashMap<String, GlobalData>();
+    public static HashMap<String, BallData> bulidFromTxt(String filePath) throws IOException{
+        HashMap<String, BallData> andes = new HashMap<String, BallData>();
         InputStream inStream = FileUtil.class.getResourceAsStream(filePath);
         InputStreamReader inStreamR = new InputStreamReader(inStream);
         BufferedReader br = new BufferedReader(inStreamR);
         String line = br.readLine();//从文件读取一行字符串
         for (int i = 0; line != null; i++) {
-            GlobalData gd = GlobalData.getGlobalData(line);
+            BallData gd = BallData.getGlobalData(line);
             andes.put(gd.getId(), gd);
             line = br.readLine();
         }

@@ -12,7 +12,7 @@ import java.util.Map;
  * 3 从待选区里面 生成号码组合。
  */
 public class Calc {
-    private HashMap<String, GlobalData> andes;
+    private HashMap<String, BallData> andes;
     private StringBuilder fullPool = new StringBuilder("01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33");
     private StringBuilder rest = new StringBuilder(fullPool);
 
@@ -42,22 +42,12 @@ public class Calc {
      */
     private void justed2(int numBegin, int numEnd) {
         for(int i = numBegin; i < numEnd; i++) {
-            GlobalData first = getNumDate(i);
-            GlobalData second = getNumDate(i + 1);
+            BallData first = getNumDate(i);
+            BallData second = getNumDate(i + 1);
 
             ArrayList firstPool1 = first.getPool1();
             ArrayList secondPool1 = second.getPool1();
             ArrayList include= repeat(i, i + 1);
-//            ArrayList include = new ArrayList();
-//            ArrayList exclude = new ArrayList();
-//            for (int j = 0; j < firstPool1.size(); j++) {
-//                String temp = (String) firstPool1.get(j);
-//                if (secondPool1.contains(temp)) {
-//                    include.add(temp);
-//                } else {
-//                    exclude.add(temp);
-//                }
-//            }
             System.out.printf("%8s: 本期重复的%20s 非重复的%20s%n",
                     second.getId(), include.toString(), secondPool1.toString());
         }
@@ -70,8 +60,8 @@ public class Calc {
      * @param old
      */
     private ArrayList repeat(int target, int old){
-        GlobalData first = getNumDate(target);
-        GlobalData second = getNumDate(old);
+        BallData first = getNumDate(target);
+        BallData second = getNumDate(old);
 
         ArrayList firstPool1 = first.getPool1();
         ArrayList secondPool1 = second.getPool1();
@@ -91,17 +81,20 @@ public class Calc {
     /*
      * 根据自己的算法 用历史数据进行判断，看看成功的概率有多大。
      */
-    public void justed() {
-        int numbegin = 2014006;
-        int numend = 2014097;
+    public void justed(int numbegin, int numend) {
         for(int i = numbegin; i <= numend; i++) {
-            GlobalData calced = removeOld(i + "");
-            GlobalData truely = getNumDate(i);
+            BallData calced = removeOld(i + "");
+            BallData truely = getNumDate(i);
             anylisy(calced, truely);
         }
     }
 
-    private void anylisy(GlobalData calced, GlobalData truely) {
+    /**
+     * 分析
+     * @param calced
+     * @param truely
+     */
+    private void anylisy(BallData calced, BallData truely) {
         ArrayList listCalced = calced.getPool1();
         ArrayList listTruely = truely.getPool1();
         ArrayList include = new ArrayList();
@@ -114,44 +107,24 @@ public class Calc {
                 exclude.add(temp);
             }
         }
-        System.out.printf("%8s:预测%64s 预测到的%20s 未预测到的%20s 与上期重复的号%20s%n",
-                calced.getId(),listCalced.toString(), include.toString(), exclude.toString());
-    }
-
-    /*
-     * 获取前5期重号 这个思路最男。
-     */
-    private void getRepetNum(String number) {
-        Integer target = Integer.parseInt(number);
-        int num = target.intValue();
-        GlobalData next = new GlobalData(target.toString(), fullPool.toString());
-
-        for(int i = 1; i < 5; i++) {
-            GlobalData first = getNumDate(num - i + "");
-            for(int j = i; j < 5; j++ ) {
-                GlobalData temp = getNumDate(num - j + "");
-                first.remove(temp);
-            }
-        }
-
-        for (int i = 1; i <= 5; i++) {
-            GlobalData temp = andes.get((num - i) + "");
-        }
-        next.print();
+        int id = Integer.parseInt(calced.getId());
+        AnyliseData ad = new AnyliseData(calced.getId(), calced, truely, include, exclude, repeat(id, id - 1));
+        ad.print();
+//        System.out.printf("%8s:预%64s 预测命中率%5.2f%% 命中率%5.2f%%  命中%20s 未命中%20s 本期重号%20s %n",
+//                calced.getId(),listCalced.toString(), include.size()*100.0/listCalced.size(), include.size()*100.0/6, include.toString(), exclude.toString(), repeat(id, id - 1));
     }
 
 
     /*
      * 粗略删除之前5期已经出现的号码
      */
-    private GlobalData removeOld(String number) {
+    private BallData removeOld(String number) {
         Integer target = Integer.parseInt(number);
-        GlobalData next = new GlobalData(target.toString(), fullPool.toString());
+        BallData next = new BallData(target.toString(), fullPool.toString());
         for (int i = 1; i <= 5; i++) {
-            GlobalData temp = andes.get((target.intValue() - i) + "");
+            BallData temp = andes.get((target.intValue() - i) + "");
             next.remove(temp);
         }
-//        next.print();
         return next;
     }
 
@@ -165,7 +138,7 @@ public class Calc {
             Map.Entry entry = (Map.Entry) iter.next();
             Object key = entry.getKey();
             Object val = entry.getValue();
-            ((GlobalData)val).print();
+            ((BallData)val).print();
         }
 
     }
@@ -173,24 +146,27 @@ public class Calc {
     /*
      * 获取指定期号的数据
      */
-    private GlobalData getNumDate(String number){
-        GlobalData temp = andes.get(number);
+    private BallData getNumDate(String number){
+        BallData temp = andes.get(number);
         return temp;
     }
 
     /*
      * 获取指定期号的数据
      */
-    private GlobalData getNumDate(int number){
-        GlobalData temp = andes.get(number + "");
+    private BallData getNumDate(int number){
+        BallData temp = andes.get(number + "");
         return temp;
     }
 
 
     public static void main(String[] arg) {
         Calc c = new Calc();
+        int numbegin = 2014006;
+        int numend = 2014097;
 //        c.removeOld("2014098");
-//       c.justed();
-        c.justed2(2014006, 2014097);
+       c.justed(numbegin, numend);
+
+//        c.justed2(numbegin, numend);
     }
 }
