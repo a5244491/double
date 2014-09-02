@@ -1,8 +1,5 @@
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by cq on 14-7-28.
@@ -39,9 +36,9 @@ public class Calc {
 
 
     /**
-     * 上期出现的号，本期再次出现的概率有多大
+     * 从指定的期号开始，分析上期出现的号，本期再次出现的概率有多大
      */
-    private void justed2(int numBegin, int numEnd) {
+    private void any_repeat(int numBegin, int numEnd) {
         for(int i = numBegin; i < numEnd; i++) {
             BallData first = getNumDate(i);
             BallData second = getNumDate(i + 1);
@@ -89,7 +86,16 @@ public class Calc {
             BallData truely = getNumDate(i);
             anylisy(calced, truely);
         }
-        anyliseDatalist.sortByRate();
+//        anyliseDatalist.sortByRate();
+//        anyliseDatalist.sortByID();
+        anyliseDatalist.getBallDataById("2014072");
+    }
+
+
+    public void menos(BallData calced, String menosList){
+        String[] temp = menosList.split(" ");
+        calced.getPool1().removeAll(Arrays.asList(temp));
+        calced.print();
     }
 
     /**
@@ -167,10 +173,14 @@ public class Calc {
     public static void main(String[] arg) {
         Calc c = new Calc();
         int numbegin = 2014006;
-        int numend = 2014099;
-//        c.removeOld("2014098");
-       c.justed(numbegin, numend);
+        int numend = 2014100;
+//        BallData bd = c.removeOld("2014101");
+//        bd.print();
+//        c.menos(bd, "03 04 15 26 28 30 31");
+//        bd.print();
 
-//        c.justed2(numbegin, numend);
+      c.justed(numbegin, numend);
+
+//        c.any_repeat(numbegin, numend);
     }
 }
